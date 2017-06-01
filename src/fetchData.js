@@ -6,41 +6,61 @@ import {
   StyleSheet
 } from 'react-native';
 
-var MOCKED_MOVE_DATA = [
-  { title: 'Title-2012', year: '2012', posters: {thumbnail: 'http://i.imgur.com/UePbdph.jpg'} },
-  { title: 'Title-2013', year: '2013', posters: {thumbnail: 'http://i.imgur.com/UePbdph.jpg'} },
-  { title: 'Title-2015', year: '2015', posters: {thumbnail: 'http://i.imgur.com/UePbdph.jpg'} },  
-];
-class FetchData extends Component {
-  render() {
-    var movie = MOCKED_MOVE_DATA[0];
+var REQUEST_URL = 'https://raw.githubusercontent.com/facebook/react-native/master/docs/MoviesExample.json';
 
-    var styles = StyleSheet.create({
-      container: {
-        flex: 1,
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#F5FCFF'
-      },
-      rightContainer: {
-        flex: 1,
-        backgroundColor: '#F5CCCC'
-      },
-      title: {
-        fontSize: 20,
-        marginBottom: 8,
-        textAlign: 'center'
-      },
-      year: {
-        textAlign: 'center'
-      },
-      thumbnail: {
-        width: 53,
-        height: 81
-      }
-    });
-    return(
+var styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#F5FCFF'
+  },
+  rightContainer: {
+    flex: 1,
+    backgroundColor: '#F5CCCC'
+  },
+  title: {
+    fontSize: 20,
+    marginBottom: 8,
+    textAlign: 'center'
+  },
+  year: {
+    textAlign: 'center'
+  },
+  thumbnail: {
+    width: 53,
+    height: 81
+  }
+});
+
+class FetchData extends Component {
+
+  constructor(props) {
+    super(props);
+    this.state = { movies: null };
+  }
+
+  componentDidMount() {
+    this.fetchData();
+  }
+
+  fetchData() {
+    fetch(REQUEST_URL)
+      .then((response) => response.json())
+      .then((responseJson) => {
+        console.log('responseJson',responseJson);
+        this.setState({
+          movies: responseJson.movies,
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+
+  renderMovie(movie) {
+    return (
       <View style={styles.container}>
         <Image
           source={{uri: movie.posters.thumbnail}}
@@ -51,7 +71,26 @@ class FetchData extends Component {
           <Text style={styles.year}>{movie.year}</Text>
         </View>
       </View>
+    );   
+  }
+
+  renderLodingView() {
+    return (
+      <View style={styles.container}>
+        <Text>Loading Movies....</Text>
+      </View>
     );
+  }
+
+  render() {
+
+    if(!this.state.movies) {
+      return this.renderLodingView();
+    }
+    
+    var movie = this.state.movies[0];
+    return this.renderMovie(movie);
+
   }
 }
 
