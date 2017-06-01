@@ -3,7 +3,8 @@ import {
   View,
   Image,
   Text,
-  StyleSheet
+  StyleSheet,
+  ListView
 } from 'react-native';
 
 var REQUEST_URL = 'https://raw.githubusercontent.com/facebook/react-native/master/docs/MoviesExample.json';
@@ -17,8 +18,11 @@ var styles = StyleSheet.create({
     backgroundColor: '#F5FCFF'
   },
   rightContainer: {
-    flex: 1,
-    backgroundColor: '#F5CCCC'
+    flex: 1
+  },
+  listView: {
+    paddingTop: 20,
+    backgroundColor: '#F5FCFF'
   },
   title: {
     fontSize: 20,
@@ -31,14 +35,19 @@ var styles = StyleSheet.create({
   thumbnail: {
     width: 53,
     height: 81
-  }
+  },
 });
 
 class FetchData extends Component {
 
   constructor(props) {
     super(props);
-    this.state = { movies: null };
+    this.state = { 
+      dataSource: new ListView.DataSource({
+        rowHasChanged: (row1, row2) => row1 !== row2
+      }),
+      loaded: false
+    };
   }
 
   componentDidMount() {
@@ -49,10 +58,11 @@ class FetchData extends Component {
     fetch(REQUEST_URL)
       .then((response) => response.json())
       .then((responseJson) => {
-        console.log('responseJson',responseJson);
         this.setState({
-          movies: responseJson.movies,
+          dataSource: this.state.dataSource.cloneWithRows(responseJson.movies),
+          loaded: true
         });
+        console.log();
       })
       .catch((error) => {
         console.log(error);
@@ -84,13 +94,17 @@ class FetchData extends Component {
 
   render() {
 
-    if(!this.state.movies) {
+    if(!this.state.loaded) {
       return this.renderLodingView();
     }
     
-    var movie = this.state.movies[0];
-    return this.renderMovie(movie);
-
+    return(
+      <ListView
+        dataSource={this.state.dataSource}
+        renderRow={this.renderMovie}
+        style={styles.listView}
+      />
+    );
   }
 }
 
