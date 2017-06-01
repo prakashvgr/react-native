@@ -1,4 +1,5 @@
 import { AppRegistry } from 'react-native';
 import ScrollView from './src/scrollView';
+import ListView from './src/listView';
 
-AppRegistry.registerComponent('AwesomeProject', () => ScrollView);
+AppRegistry.registerComponent('AwesomeProject', () => ListView);
