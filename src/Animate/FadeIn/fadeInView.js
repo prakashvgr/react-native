@@ -15,7 +15,10 @@ class FaveInView extends Component {
   componentDidMount() {
     Animated.timing(
       this.state.fadeAnim,
-      { toValue: 1 }
+      { 
+        toValue: 100,
+        duration: 2000
+      }
     ).start();
   }
 
