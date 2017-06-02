@@ -3,5 +3,6 @@ import ScrollView from './src/scrollView';
 import ListView from './src/listView';
 import FetchData from './src/fetchData';
 import MovieList from './src/movieList';
+import FadeApp from './src/FadeIn';
 
-AppRegistry.registerComponent('AwesomeProject', () => MovieList);
+AppRegistry.registerComponent('AwesomeProject', () => FadeApp);
